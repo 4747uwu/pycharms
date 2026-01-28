@@ -52,7 +52,7 @@ async function registerPlugins() {
       },
       servers: [
         {
-          url: `http://localhost:${process.env.PORT || 3000}`,
+          url: `https://pycharms.onrender.com`,
           description: 'Development server',
         },
       ],
