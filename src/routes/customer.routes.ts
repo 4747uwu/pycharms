@@ -3,13 +3,13 @@ import { CustomerController } from '../controllers/customer.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { requireRole } from '../middleware/role.middleware';
 import { validateBody } from '../middleware/validation.middleware';
-import { createCustomerSchema, updateCustomerSchema } from '../dtos/customer.dto';
+import { createCustomerSchema, updateCustomerSchema, CreateCustomerDTO, UpdateCustomerDTO } from '../dtos/customer.dto';
 
 const customerController = new CustomerController();
 
 export async function customerRoutes(server: FastifyInstance) {
   // POST /customers - Create customer (Admin only)
-  server.post(
+  server.post<{ Body: CreateCustomerDTO }>(
     '/customers',
     {
       preHandler: [authenticate, requireRole('ADMIN'), validateBody(createCustomerSchema)],
@@ -48,7 +48,7 @@ export async function customerRoutes(server: FastifyInstance) {
   );
 
   // GET /customers - Get all customers with pagination (Admin + Employee)
-  server.get(
+  server.get<{ Querystring: { page?: string; limit?: string; search?: string } }>(
     '/customers',
     {
       preHandler: [authenticate, requireRole('ADMIN', 'EMPLOYEE')],
@@ -97,7 +97,7 @@ export async function customerRoutes(server: FastifyInstance) {
   );
 
   // GET /customers/:id - Get customer by ID (Admin + Employee)
-  server.get(
+  server.get<{ Params: { id: string } }>(
     '/customers/:id',
     {
       preHandler: [authenticate, requireRole('ADMIN', 'EMPLOYEE')],
@@ -132,7 +132,7 @@ export async function customerRoutes(server: FastifyInstance) {
   );
 
   // PATCH /customers/:id - Update customer (Admin only)
-  server.patch(
+  server.patch<{ Params: { id: string }; Body: UpdateCustomerDTO }>(
     '/customers/:id',
     {
       preHandler: [authenticate, requireRole('ADMIN'), validateBody(updateCustomerSchema)],
@@ -175,7 +175,7 @@ export async function customerRoutes(server: FastifyInstance) {
   );
 
   // DELETE /customers/:id - Delete customer (Admin only)
-  server.delete(
+  server.delete<{ Params: { id: string } }>(
     '/customers/:id',
     {
       preHandler: [authenticate, requireRole('ADMIN')],

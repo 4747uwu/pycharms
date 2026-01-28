@@ -1,13 +1,13 @@
 import { FastifyInstance } from 'fastify';
 import { AuthController } from '../controllers/auth.controller';
 import { validateBody } from '../middleware/validation.middleware';
-import { registerSchema, loginSchema } from '../dtos/auth.dto';
+import { registerSchema, loginSchema, RegisterDTO, LoginDTO } from '../dtos/auth.dto';
 
 const authController = new AuthController();
 
 export async function authRoutes(server: FastifyInstance) {
   // POST /auth/register
-  server.post(
+  server.post<{ Body: RegisterDTO }>(
     '/auth/register',
     {
       preHandler: [validateBody(registerSchema)],
@@ -43,7 +43,7 @@ export async function authRoutes(server: FastifyInstance) {
   );
 
   // POST /auth/login
-  server.post(
+  server.post<{ Body: LoginDTO }>(
     '/auth/login',
     {
       preHandler: [validateBody(loginSchema)],

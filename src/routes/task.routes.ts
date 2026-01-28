@@ -3,13 +3,13 @@ import { TaskController } from '../controllers/task.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { requireRole } from '../middleware/role.middleware';
 import { validateBody } from '../middleware/validation.middleware';
-import { createTaskSchema, updateTaskStatusSchema } from '../dtos/task.dto';
+import { createTaskSchema, updateTaskStatusSchema, CreateTaskDTO, UpdateTaskStatusDTO } from '../dtos/task.dto';
 
 const taskController = new TaskController();
 
 export async function taskRoutes(server: FastifyInstance) {
   // POST /tasks - Create task (Admin only)
-  server.post(
+  server.post<{ Body: CreateTaskDTO }>(
     '/tasks',
     {
       preHandler: [authenticate, requireRole('ADMIN'), validateBody(createTaskSchema)],
@@ -113,7 +113,7 @@ export async function taskRoutes(server: FastifyInstance) {
   );
 
   // PATCH /tasks/:id/status - Update task status
-  server.patch(
+  server.patch<{ Params: { id: string }; Body: UpdateTaskStatusDTO }>(
     '/tasks/:id/status',
     {
       preHandler: [authenticate, requireRole('ADMIN', 'EMPLOYEE'), validateBody(updateTaskStatusSchema)],

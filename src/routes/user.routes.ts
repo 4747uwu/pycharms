@@ -3,7 +3,7 @@ import { UserController } from '../controllers/user.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import { requireRole } from '../middleware/role.middleware';
 import { validateBody } from '../middleware/validation.middleware';
-import { updateUserRoleSchema } from '../dtos/user.dto';
+import { updateUserRoleSchema, UpdateUserRoleDTO } from '../dtos/user.dto';
 
 const userController = new UserController();
 
@@ -39,7 +39,7 @@ export async function userRoutes(server: FastifyInstance) {
   );
 
   // GET /users/:id - Get user by ID (Admin only)
-  server.get(
+  server.get<{ Params: { id: string } }>(
     '/users/:id',
     {
       preHandler: [authenticate, requireRole('ADMIN')],
@@ -73,7 +73,7 @@ export async function userRoutes(server: FastifyInstance) {
   );
 
   // PATCH /users/:id - Update user role (Admin only)
-  server.patch(
+  server.patch<{ Params: { id: string }; Body: UpdateUserRoleDTO }>(
     '/users/:id',
     {
       preHandler: [authenticate, requireRole('ADMIN'), validateBody(updateUserRoleSchema)],
