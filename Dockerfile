@@ -12,8 +12,8 @@ RUN apk add --no-cache openssl libc6-compat
 COPY package*.json ./
 COPY tsconfig.json ./
 
-# Install dependencies
-RUN npm ci --only=production && npm cache clean --force
+# Install all dependencies (including dev dependencies for build)
+RUN npm ci && npm cache clean --force
 
 # Copy source code and Prisma schema
 COPY . .
